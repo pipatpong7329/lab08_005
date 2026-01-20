@@ -1,6 +1,7 @@
-const pool = require('../db');
+// const pool = require('../db');
+import Pool from "../db/index.js";
 
-exports.createBook = async (req, res) => {
+export const createBook = async (req, res) => {
  const { title, author, published_year } = req.body;
  const result = await pool.query(
  'INSERT INTO books (title, author, published_year) VALUES ($1, $2, $3) RETURNING *',
@@ -9,7 +10,7 @@ exports.createBook = async (req, res) => {
  res.status(201).json(result.rows[0]);
 };
 
-exports.updateBook = async (req, res) => {
+export const updateBook = async (req, res) => {
  const { id } = req.params;
  const { title, author, published_year } = req.body;
  const result = await pool.query(
@@ -19,12 +20,12 @@ exports.updateBook = async (req, res) => {
  res.json(result.rows[0]);
 };
 
-exports.deleteBook = async (req, res) => {
+export const deleteBook = async (req, res) => {
  await pool.query('DELETE FROM books WHERE id = $1', [req.params.id]);
  res.sendStatus(204);
 };
 
-exports.getBooks = async (req, res) => {
+export const getBooks = async (req, res) => {
     try {
           const result = await pool.query('SELECT * FROM books');
           res.status(200).json(result.rows);
@@ -32,7 +33,7 @@ exports.getBooks = async (req, res) => {
         res.status(500).json({"message":"Cannot fetch data." + error})
     }
 };
-exports.getBookById = async (req, res) => {
+export const getBookById = async (req, res) => {
  const { id } = req.params;
  const result = await pool.query('SELECT * FROM books WHERE id = $1', [id]);
  res.json(result.rows[0]);
