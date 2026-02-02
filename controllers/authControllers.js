@@ -6,6 +6,12 @@ import pool from "../db/index.js";
 export const register = async (req, res) => {
    const { username, password, name, role } = req.body;
    try {
+       const checkUserSql = "SELECT id FROM users WHERE username = $1";
+      const checkResult = await pool.query(checkUserSql, [username]);
+
+      if (checkResult.rows.length > 0) {
+         return res.status(400).json({ message: "Username นี้ถูกใช้งานแล้ว" });
+      }
       const insertSql = `
          INSERT INTO users (username, password, name, role)
          VALUES ($1, $2, $3, $4)
@@ -30,7 +36,7 @@ export const login = async (req, res) => {
    try {
      
       const { rows } = await pool.query(
-         `SELECT id, username, password, role FROM users WHERE username = $1 LIMIT 1`,
+         `SELECT id, username,password,role FROM users WHERE username = $1 LIMIT 1`,
          [username]
       );
       
